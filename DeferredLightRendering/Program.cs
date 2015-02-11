@@ -76,8 +76,7 @@ namespace DeferredLightRendering
 
                     glContext.SwapBuffers();
 
-                    //Thread.Sleep(1000 / 60);
-                    //Thread.Yield();
+                    Thread.Sleep(1000 / 60); //"60" fps (not really...)
 
                     nw.ProcessEvents();
                 }
