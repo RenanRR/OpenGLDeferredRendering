@@ -18,17 +18,19 @@ void main()
     vec2 texCoord = gl_FragCoord.xy / ScreenSize;
 
     vec3 pixelPos = texture2D(PositionBuffer,texCoord).xyz;
+    vec3 pixelNormal = normalize(texture2D(NormalBuffer, texCoord).xyz);
+    vec3 diffuseColor = texture2D(ColorBuffer, texCoord).xyz;
 
-    vec3 toLight = pixelPos - LightCenter;
-    float pixelDist = length(toLight);
+    vec3 toLight = LightCenter - pixelPos;
+
+    float attenuation = clamp(1.0 - length(toLight)/LightRadius,0.0,1.0); 
+
     toLight = normalize(toLight);
 
-    pixelDist = clamp(1.0 - (pixelDist / LightRadius),0.0,1.0);
+    float nDotL = max(dot(pixelNormal, toLight),0.0);
 
-    vec3 pixelNormal = texture2D(NormalBuffer, texCoord).xyz;
+    vec3 diffuseLight = diffuseColor * nDotL;
 
-    float nrm = dot(pixelNormal, -toLight);
-
-    LightMap = texture2D(ColorBuffer, texCoord) * vec4(LightColor, 1) * LightIntensity * nrm * pixelDist;
+    LightMap = LightIntensity * attenuation * vec4(diffuseLight,1.0);
 }
 

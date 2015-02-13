@@ -13,8 +13,10 @@ out vec3 WorldPos;
 
 void main()
 {       
+	mat3 worldRotationInverse = transpose(mat3(World));
+
 	TexCoord      = Tex;                  
-    Nrm        = (World * vec4(Norm, 0.0)).xyz;   
+    Nrm        = (worldRotationInverse * Norm);   
     WorldPos      = (World * vec4(Position, 1.0)).xyz;
 
     gl_Position  = Proj * View * World * vec4(Position, 1.0);

@@ -120,10 +120,7 @@ namespace DeferredLightRendering
 
             //Setup lights
             _pointLights = new List<PointLight>();
-            for (int x = 0; x < 8; x++)
-            {
-                _pointLights.Add(new PointLight(new Vector3(0, 3, 0), 6f, RandomVector3(), 1));
-            }
+            _pointLights.Add(new PointLight(new Vector3(0, 2.5f, 0), 10, new Vector3(1, 1, 1), 1));
 
             return true;
         }
@@ -161,14 +158,14 @@ namespace DeferredLightRendering
             _camera.Update(1f / 60f);
 
             //Rotate lights around
-            float one = (MathHelper.Pi * 2) / _pointLights.Count;
-            for (int x = 0; x < _pointLights.Count; x++)
-            {
-                PointLight pl = _pointLights[x];
+            //float one = (MathHelper.Pi * 2) / _pointLights.Count;
+            //for (int x = 0; x < _pointLights.Count; x++)
+            //{
+            //    PointLight pl = _pointLights[x];
 
-                pl.Center.X = (float)Math.Sin(lightRot + one * x) * 4;
-                pl.Center.Z = (float)Math.Cos(lightRot + one * x) * 4;
-            }
+            //    pl.Center.X = (float)Math.Sin(lightRot + one * x) * 4;
+            //    pl.Center.Z = (float)Math.Cos(lightRot + one * x) * 4;
+            //}
 
             //Actual rendering:
             //#1 pass:
