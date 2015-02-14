@@ -29,11 +29,6 @@ namespace DeferredLightRendering
             set { SetUniform("ScreenSize", value); }
         }
 
-        public int DiffuseBuffer
-        {
-            set { SetTextureUniform("ColorBuffer", value); }
-        }
-
         public int PositionBuffer
         {
             set { SetTextureUniform("PositionBuffer", value); }

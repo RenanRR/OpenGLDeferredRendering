@@ -4,6 +4,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -125,7 +126,7 @@ namespace DeferredLightRendering
             //Setup lights
             _pointLights = new List<PointLight>();
             _pointLights.Add(new PointLight(new Vector3(0, 2.5f, 0), 10, new Vector3(1, 1, 1), 1));
-            _pointLights.Add(new PointLight(new Vector3(3, 2.5f, 3), 6, new Vector3(0, 0, 1), 2));
+            _pointLights.Add(new PointLight(new Vector3(3, 2.5f, 3), 5, new Vector3(0, 0, 1), 2));
 
             return true;
         }
@@ -200,12 +201,16 @@ namespace DeferredLightRendering
             }
             else
             {
+                GL.ClearColor(Color4.CornflowerBlue);
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
                 GL.CullFace(CullFaceMode.Back);
                 _finalCombine.Use();
                 _finalCombine.ColorBuffer = _gbuffer.DiffuseTexture;
                 _finalCombine.LightBuffer = _gbuffer.LightTexture;
+                _finalCombine.AmbientColor = Color4.White;
+                _finalCombine.AmbientPower = 0;//((float)Math.Sin(lightRot * 6) + 1) / 2f;
                 _fsQuad.Draw();
-
 
                 //Light blub icon rendering
                 GL.Enable(EnableCap.Blend);
@@ -276,7 +281,6 @@ namespace DeferredLightRendering
                 _pointShader.View = _camera.View;
                 _pointShader.Projection = _camera.Projection;
                 _pointShader.ScreenSize = new Vector2(Width, Height);
-                _pointShader.DiffuseBuffer = _gbuffer.DiffuseTexture;
                 _pointShader.PositionBuffer = _gbuffer.PositionTexture;
                 _pointShader.NormalBuffer = _gbuffer.NormalTexture;
 

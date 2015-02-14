@@ -23,9 +23,9 @@ namespace DeferredLightRendering
 
         PixelInternalFormat[] _iFormats = new PixelInternalFormat[]{
             PixelInternalFormat.Rgb32f, //Position -> we need float values
-            PixelInternalFormat.Rgb, //Diffuse -> we need color values [0-1]
+            PixelInternalFormat.Rgba, //Diffuse -> we need color values [0-1]
             PixelInternalFormat.Rgb32f, //Normal -> Same as position
-            PixelInternalFormat.Rgb, //Light -> Same as diffuse
+            PixelInternalFormat.Rgba, //Light -> Same as diffuse
 
         };
 

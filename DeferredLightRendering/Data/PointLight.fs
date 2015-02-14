@@ -9,7 +9,6 @@ uniform vec3 LightColor;
 uniform float LightIntensity;
 uniform vec3 LightCenter;
 
-uniform sampler2D ColorBuffer;
 uniform sampler2D PositionBuffer;
 uniform sampler2D NormalBuffer;
 
@@ -19,6 +18,13 @@ void main()
 
     vec3 pixelPos = texture2D(PositionBuffer,texCoord).xyz;
     vec3 pixelNormal = normalize(texture2D(NormalBuffer, texCoord).xyz);
+
+    float alpha = length(pixelNormal);
+    if(alpha < 0.1)
+    {
+        LightMap = vec4(0,0,0,0);
+        return;
+    }
 
     vec3 toLight = LightCenter - pixelPos;
 
@@ -30,6 +36,6 @@ void main()
 
     vec3 diffuseLight = LightColor * nDotL;
 
-    LightMap = LightIntensity * attenuation * vec4(diffuseLight,1.0);
+    LightMap = LightIntensity * attenuation * vec4(diffuseLight, alpha);
 }
 
