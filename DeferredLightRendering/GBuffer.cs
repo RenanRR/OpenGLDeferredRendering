@@ -91,10 +91,11 @@ namespace DeferredLightRendering
         {
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _fbo);
 
-            GL.DrawBuffers(3, new DrawBuffersEnum[]{
+            GL.DrawBuffers(4, new DrawBuffersEnum[]{
                 DrawBuffersEnum.ColorAttachment0, //Pos
                 DrawBuffersEnum.ColorAttachment1, //Diff
-                DrawBuffersEnum.ColorAttachment2  //Normal
+                DrawBuffersEnum.ColorAttachment2,  //Normal
+                DrawBuffersEnum.ColorAttachment3
             });
         }
 

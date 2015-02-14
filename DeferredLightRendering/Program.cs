@@ -125,8 +125,8 @@ namespace DeferredLightRendering
 
             //Setup lights
             _pointLights = new List<PointLight>();
-            _pointLights.Add(new PointLight(new Vector3(0, 2.5f, 0), 10, new Vector3(1, 1, 1), 1));
-            _pointLights.Add(new PointLight(new Vector3(3, 2.5f, 3), 5, new Vector3(0, 0, 1), 2));
+            //_pointLights.Add(new PointLight(new Vector3(0, 2.5f, 0), 10, new Vector3(1, 1, 1), 1));
+            //_pointLights.Add(new PointLight(new Vector3(3, 2.5f, 3), 5, new Vector3(0, 0, 1), 2));
 
             return true;
         }
@@ -185,7 +185,7 @@ namespace DeferredLightRendering
 
             //_quad.Draw();
 
-            _pointLights[1].Center = _camera.Position;
+            //_pointLights[1].Center = _camera.Position;
 
             //Actual rendering:
             //#1 pass:
@@ -208,8 +208,6 @@ namespace DeferredLightRendering
                 _finalCombine.Use();
                 _finalCombine.ColorBuffer = _gbuffer.DiffuseTexture;
                 _finalCombine.LightBuffer = _gbuffer.LightTexture;
-                _finalCombine.AmbientColor = Color4.White;
-                _finalCombine.AmbientPower = 0;//((float)Math.Sin(lightRot * 6) + 1) / 2f;
                 _fsQuad.Draw();
 
                 //Light blub icon rendering
@@ -245,7 +243,7 @@ namespace DeferredLightRendering
                 GL.CullFace(CullFaceMode.Back);
 
                 GL.ClearColor(_transparentBlack);
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
                 _geomShader.Use();
 
@@ -253,6 +251,10 @@ namespace DeferredLightRendering
                 _geomShader.Projection = _camera.Projection;
                 _geomShader.Texture = _crate;
 
+                _geomShader.AmbientColor = Color4.White;
+                _geomShader.AmbientPower = 1f;//((float)Math.Sin(lightRot * 6) + 1) / 2f;
+                _geomShader.AmbientDirection = Vector3.One;
+                
                 foreach (Box b in _boxes)
                 {
                     _geomShader.World = Matrix4.CreateScale(b.Scale) * Matrix4.CreateRotationX(b.Rotation.X) * Matrix4.CreateRotationY(b.Rotation.Y) * Matrix4.CreateRotationZ(b.Rotation.Z) * Matrix4.CreateTranslation(b.Position);
@@ -268,8 +270,8 @@ namespace DeferredLightRendering
             _gbuffer.BindForLightPass();
             {
                 //Light rendering
-                GL.ClearColor(_transparentBlack);
-                GL.Clear(ClearBufferMask.ColorBufferBit);
+                //GL.ClearColor(_transparentBlack);
+                //GL.Clear(ClearBufferMask.ColorBufferBit);
 
                 GL.Enable(EnableCap.Blend);
                 GL.BlendEquation(BlendEquationMode.FuncAdd);

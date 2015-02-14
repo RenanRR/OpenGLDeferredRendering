@@ -30,6 +30,21 @@ namespace DeferredLightRendering
             set { SetTextureUniform("Texture", value); }
         }
 
+        public Color4 AmbientColor
+        {
+            set { SetUniform("AmbientColor", new Vector3(value.R, value.G, value.B)); }
+        }
+
+        public float AmbientPower
+        {
+            set { SetUniform("AmbientPower", value); }
+        }
+
+        public Vector3 AmbientDirection
+        {
+            set { SetUniform("AmbientDirection", value); }
+        }
+
         static Dictionary<int,string> _data = new Dictionary<int,string>(){
             {0,"Position"},
             {1, "Tex"},
