@@ -21,6 +21,14 @@ namespace DeferredLightRendering
         int[] _textures;
         int _depth;
 
+        PixelInternalFormat[] _iFormats = new PixelInternalFormat[]{
+            PixelInternalFormat.Rgb32f, //Position -> we need float values
+            PixelInternalFormat.Rgb, //Diffuse -> we need color values [0-1]
+            PixelInternalFormat.Rgb32f, //Normal -> Same as position
+            PixelInternalFormat.Rgb, //Light -> Same as diffuse
+
+        };
+
         public int PositionTexture
         {
             get { return _textures[(int)GBufferTexture.Position]; }
@@ -56,7 +64,7 @@ namespace DeferredLightRendering
              for (int i = 0; i < _textures.Length; i++) 
              {
                  GL.BindTexture(TextureTarget.Texture2D, _textures[i]);
-                 GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb32f, width, height, 0, PixelFormat.Rgb, PixelType.Float, (IntPtr)null);
+                 GL.TexImage2D(TextureTarget.Texture2D, 0, _iFormats[i], width, height, 0, PixelFormat.Rgb, PixelType.Float, (IntPtr)null);
                  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
                  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
                  GL.FramebufferTexture2D(FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0 + i, TextureTarget.Texture2D, _textures[i], 0);

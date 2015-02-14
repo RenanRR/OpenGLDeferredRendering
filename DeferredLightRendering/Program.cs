@@ -31,11 +31,13 @@ namespace DeferredLightRendering
         Cube _cube;
         Sphere _sphere;
         Quad _quad;
+        FullscreenQuad _fsQuad;
 
         //Shaders
         GeomShader _geomShader;
         PointLightShader _pointShader;
         FlatShader _flatShader;
+        FinalCombineShader _finalCombine;
 
         //Scene data
         List<Box> _boxes;
@@ -108,10 +110,12 @@ namespace DeferredLightRendering
             _cube = new Cube();
             _sphere = new Sphere(1f, 25, 25);
             _quad = new Quad();
+            _fsQuad = new FullscreenQuad();
 
             _geomShader = new GeomShader(data);
             _pointShader = new PointLightShader(data);
             _flatShader = new FlatShader(data);
+            _finalCombine = new FinalCombineShader(data);
 
             _boxes = new List<Box>();
             //Setup scene boxes
@@ -121,6 +125,7 @@ namespace DeferredLightRendering
             //Setup lights
             _pointLights = new List<PointLight>();
             _pointLights.Add(new PointLight(new Vector3(0, 2.5f, 0), 10, new Vector3(1, 1, 1), 1));
+            _pointLights.Add(new PointLight(new Vector3(3, 2.5f, 3), 6, new Vector3(0, 0, 1), 2));
 
             return true;
         }
@@ -167,6 +172,20 @@ namespace DeferredLightRendering
             //    pl.Center.Z = (float)Math.Cos(lightRot + one * x) * 4;
             //}
 
+            //GL.ClearColor(Color4.CornflowerBlue);
+            //GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            //_flatShader.Use();
+            //_flatShader.View = Matrix4.Identity;
+            //_flatShader.Projection = Matrix4.Identity;
+            //_flatShader.Texture = _blub;
+
+            //_flatShader.World = Matrix4.Identity;
+
+            //_quad.Draw();
+
+            _pointLights[1].Center = _camera.Position;
+
             //Actual rendering:
             //#1 pass:
             GeomPass();
@@ -181,7 +200,35 @@ namespace DeferredLightRendering
             }
             else
             {
-                _gbuffer.BlitResult(Width, Height);
+                GL.CullFace(CullFaceMode.Back);
+                _finalCombine.Use();
+                _finalCombine.ColorBuffer = _gbuffer.DiffuseTexture;
+                _finalCombine.LightBuffer = _gbuffer.LightTexture;
+                _fsQuad.Draw();
+
+
+                //Light blub icon rendering
+                GL.Enable(EnableCap.Blend);
+                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+                GL.CullFace(CullFaceMode.Front);
+
+                _flatShader.Use();
+                _flatShader.View = _camera.View;
+                _flatShader.Projection = _camera.Projection;
+                _flatShader.Texture = _blub;
+
+                foreach (PointLight pl in _pointLights)
+                {
+                    if (pl.Enabled)
+                    {
+                        _flatShader.World = Matrix4.CreateScale(0.2f) * CreateBillboard(pl.Center, _camera.Position, new Vector3(0, 1, 0), null);
+
+                        _quad.Draw();
+                    }
+                }
+
+                GL.Disable(EnableCap.Blend);
             }
         }
 
@@ -244,26 +291,6 @@ namespace DeferredLightRendering
                     }
                 }
 
-                //Light blub icon rendering
-                GL.Enable(EnableCap.DepthTest);
-                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-
-                _flatShader.Use();
-                _flatShader.View = _camera.View;
-                _flatShader.Projection = _camera.Projection;
-                _flatShader.Texture = _blub;
-
-                foreach (PointLight pl in _pointLights)
-                {
-                    if (pl.Enabled)
-                    {
-                        _flatShader.World = Matrix4.CreateScale(0.2f) * CreateBillboard(pl.Center, _camera.Position, new Vector3(0, 1, 0), null);
-
-                        _quad.Draw();
-                    }
-                }
-
-                GL.Disable(EnableCap.DepthTest);
                 GL.Disable(EnableCap.Blend);
             }
             _gbuffer.Restore();

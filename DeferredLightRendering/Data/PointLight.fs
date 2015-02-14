@@ -19,7 +19,6 @@ void main()
 
     vec3 pixelPos = texture2D(PositionBuffer,texCoord).xyz;
     vec3 pixelNormal = normalize(texture2D(NormalBuffer, texCoord).xyz);
-    vec3 diffuseColor = texture2D(ColorBuffer, texCoord).xyz;
 
     vec3 toLight = LightCenter - pixelPos;
 
@@ -29,7 +28,7 @@ void main()
 
     float nDotL = max(dot(pixelNormal, toLight),0.0);
 
-    vec3 diffuseLight = diffuseColor * nDotL;
+    vec3 diffuseLight = LightColor * nDotL;
 
     LightMap = LightIntensity * attenuation * vec4(diffuseLight,1.0);
 }
