@@ -125,8 +125,8 @@ namespace DeferredLightRendering
 
             //Setup lights
             _pointLights = new List<PointLight>();
-            //_pointLights.Add(new PointLight(new Vector3(0, 2.5f, 0), 10, new Vector3(1, 1, 1), 1));
-            //_pointLights.Add(new PointLight(new Vector3(3, 2.5f, 3), 5, new Vector3(0, 0, 1), 2));
+            _pointLights.Add(new PointLight(new Vector3(0, 2.5f, 0), 10, new Vector3(1, 1, 1), 1));
+            _pointLights.Add(new PointLight(new Vector3(3, 2.5f, 3), 5, new Vector3(0, 0, 1), 2));
 
             return true;
         }
@@ -252,7 +252,7 @@ namespace DeferredLightRendering
                 _geomShader.Texture = _crate;
 
                 _geomShader.AmbientColor = Color4.White;
-                _geomShader.AmbientPower = 1f;//((float)Math.Sin(lightRot * 6) + 1) / 2f;
+                _geomShader.AmbientPower = ((float)Math.Sin(lightRot * 6) + 1) / 2f;
                 _geomShader.AmbientDirection = Vector3.One;
                 
                 foreach (Box b in _boxes)
